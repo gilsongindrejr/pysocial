@@ -1,8 +1,8 @@
-from django.shortcuts import render
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import UserCreationForm
 
@@ -15,13 +15,17 @@ class RegisterUserView(CreateView):
     form_class = UserCreationForm
 
 
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/profile.html'
+
+
 class LoginView(LoginView):
     template_name = 'users/login.html'
 
 
-class LogoutView(LogoutView):
+class LogoutView(LoginRequiredMixin, LogoutView):
     template_name = 'users/logout.html'
 
 
-class PasswordChangeView(PasswordChangeView):
+class PasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'users/password_change.html'
