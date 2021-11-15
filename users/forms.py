@@ -10,6 +10,7 @@ class UserCreationForm(UserCreationForm):
     last_name = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': _('Last name')}))
     password1 = forms.CharField(label='', widget=forms.PasswordInput(attrs={'placeholder': _('Password')}))
     password2 = forms.CharField(label='', widget=forms.PasswordInput(attrs={'placeholder': _('Password confirmation')}))
+    image = forms.ImageField()
 
     class Meta:
         model = get_user_model()

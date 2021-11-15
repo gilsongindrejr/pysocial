@@ -1,6 +1,14 @@
+from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
+from stdimage import StdImageField
+
+
+def get_file_path(_instance, filename) -> str:
+    ext = filename.split('.')[-1]
+    filename = f'{uuid4()}.{ext}'
+    return f'users/{filename}'
 
 
 class UserManager(BaseUserManager):
@@ -36,6 +44,7 @@ class User(AbstractUser):
     email = models.EmailField('email', max_length=50, unique=True)
     first_name = models.CharField(_('first name'), max_length=20)
     last_name = models.CharField(_('last name'), max_length=20)
+    image = StdImageField(_('image'), upload_to=get_file_path, variations={'thumb': (480, 480)}, default='', blank=True)
     username = None
 
     USERNAME_FIELD = 'email'
