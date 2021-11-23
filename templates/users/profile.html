@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+<body>
+  <div>
+    <a href="{% url 'users:logout' %}">Logout</a>
+    <a href="{% url 'users:update_profile' %}">Update profile</a>
+  </div>
+  {% if user.image %}
+  <span><img src="{{ user.image.url }}" alt="image"></span>
+  {% else %}
+  <span><img src="/media/users/placeholder.png" alt=""></span>
+  {% endif %}
+  <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+  <h1>Welcome to Pysocial</h1>
+</body>
+</html>
