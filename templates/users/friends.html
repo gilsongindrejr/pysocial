@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Friends</title>
+</head>
+<body>
+    <h1>Add Friends</h1>
+    <h3>You have {{ waiting_friend_requests }} friend requests</h3>
+    {% for request in requests_received %}
+        {% if request.accepted == False %}
+            <h4>{{ request.user }} want to be friend with you!</h4>
+            <a href="{% url 'users:accept_friendship' request.pk %}">Accept</a>
+            <a href="{% url 'users:deny_friendship' request.pk %}">Deny</a>
+        {% endif %}
+    {% endfor %}
+    {% if alert %}
+        <h4>{{ alert }}</h4>
+    {% endif %}
+    <h3>Add friend</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit">
+    </form>
+    <h3>Friends</h3>
+    {% for friendship in friendships %}
+        {% if friendship.user.email == user.email %}
+            <h4>{{ friendship.friend.email }}</h4>
+        {% else %}
+            <h4>{{ friendship.user.email }}</h4>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>

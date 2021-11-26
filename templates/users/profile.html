@@ -16,5 +16,6 @@
   {% endif %}
   <h3>{{ user.first_name }} {{ user.last_name }}</h3>
   <h1>Welcome to Pysocial</h1>
+  <a href="{% url 'users:friends' %}">Add friends</a>
 </body>
 </html>

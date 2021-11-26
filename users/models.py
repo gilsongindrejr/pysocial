@@ -3,9 +3,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from stdimage import StdImageField
+from django.contrib.auth import get_user_model
 
 
-def get_file_path(_instance, filename) -> str:
+def get_file_path(_instance=None, filename=None) -> str:
     ext = filename.split('.')[-1]
     filename = f'{uuid4()}.{ext}'
     return f'users/{filename}'
@@ -42,7 +43,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     email = models.EmailField('email', max_length=50, unique=True)
-    first_name = models.CharField(_('first name'), max_length=20)
+    first_name = models.CharField(_('first name'), max_length=20, blank=False)
     last_name = models.CharField(_('last name'), max_length=20)
     image = StdImageField(_('image'), upload_to=get_file_path, variations={'thumb': (480, 480)}, default='', blank=True)
     username = None
@@ -54,3 +55,13 @@ class User(AbstractUser):
         return self.email
 
     objects = UserManager()
+
+
+class Friendship(models.Model):
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    user = models.ForeignKey(get_user_model(), verbose_name=_('user'), related_name='user', on_delete=models.CASCADE)
+    friend = models.ForeignKey(get_user_model(), verbose_name=_('friend'), related_name='friends', on_delete=models.CASCADE)
+    accepted = models.BooleanField(_('accepted'), default=False)
+
+    def __str__(self):
+        return f'Friendship between {self.user.email} and {self.friend.email}'

@@ -21,3 +21,7 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ('first_name', 'last_name', 'image')
+
+
+class FriendForm(forms.Form):
+    friend = forms.CharField(max_length=100, required=False)
