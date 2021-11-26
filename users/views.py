@@ -107,8 +107,7 @@ def remove_friend(request, email):
 class RegisterUserView(CreateView):
     template_name = 'users/register.html'
     model = get_user_model()
-    # Still has to implement success url
-    success_url = reverse_lazy('url_name')
+    success_url = reverse_lazy('users:login')
     form_class = UserCreationForm
 
 
