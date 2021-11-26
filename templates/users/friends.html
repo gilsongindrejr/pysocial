@@ -26,9 +26,9 @@
     <h3>Friends</h3>
     {% for friendship in friendships %}
         {% if friendship.user.email == user.email %}
-            <h4>{{ friendship.friend.email }}</h4>
+            <h4>{{ friendship.friend.email }}</h4><p><a href="{% url 'users:remove_friend' friendship.friend.email %}">remove friend</a></p>
         {% else %}
-            <h4>{{ friendship.user.email }}</h4>
+            <h4>{{ friendship.user.email }}</h4><p><a href="{% url 'users:remove_friend' friendship.user.email %}">remove friend</a></p>
         {% endif %}
     {% endfor %}
 </body>

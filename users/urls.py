@@ -3,7 +3,8 @@ from django.urls import path
 from .views import\
     RegisterUserView, LoginView, LogoutView,\
     PasswordChangeView, ProfileView, UpdateProfileView,\
-    FriendshipHandlerView, accept_friendship, deny_friendship
+    FriendshipHandlerView, accept_friendship, deny_friendship, \
+    remove_friend
 
 app_name = 'users'
 urlpatterns = [
@@ -13,6 +14,7 @@ urlpatterns = [
     path('friends', FriendshipHandlerView.as_view(), name='friends'),
     path('friend_accept/<int:pk>', accept_friendship, name='accept_friendship'),
     path('friend_deny/<int:pk>', deny_friendship, name='deny_friendship'),
+    path('friend_remove/<str:email>', remove_friend, name='remove_friend'),
 
     path('register', RegisterUserView.as_view(), name='register'),
 
