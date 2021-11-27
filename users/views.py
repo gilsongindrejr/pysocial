@@ -12,33 +12,45 @@ from .forms import UserCreationForm, UserChangeForm, FriendForm
 from .models import Friendship
 
 
+def get_requests_received(request):
+    return Friendship.objects.filter(friend__email=request.user.email)
+
+
+def get_requests_sent(request):
+    return Friendship.objects.filter(user__email=request.user.email)
+
+
+def get_friendships(request):
+    friend_requests = list(get_requests_received(request)) + list(get_requests_sent(request))
+    return [friendship for friendship in friend_requests if friendship.accepted]
+
+
+def get_friends(request):
+    friendships = get_friendships(request)
+    friends_sender = [friendship.user.email for friendship in friendships
+                      if friendship.user.email != request.user.email]
+    friends_receiver = [friendship.friend.email for friendship in friendships
+                        if friendship.friend.email != request.user.email]
+    return friends_receiver + friends_sender
+
+
 class FriendshipHandlerView(View):
 
     def get(self, request):
         form = FriendForm()
 
-        # get friend requests received and sent
-        requests_received = Friendship.objects.filter(friend__email=request.user.email)
-        requests_sent = Friendship.objects.filter(user__email=request.user.email)
-
-        # join all friend requests
-        friend_requests = list(requests_received) + list(requests_sent)
-
-        # create a list with all friend request with accepted == True
-        friendships = [friendship for friendship in friend_requests if friendship.accepted]
-
         # iterate over requests received of the user to look for unaccepted friend requests
         # increment waiting_friend_requests on which friend request still unaccepted
         waiting_friend_requests = 0
-        for f_request in requests_received:
+        for f_request in get_requests_received(request):
             if not f_request.accepted:
                 waiting_friend_requests += 1
 
         context = {
             'form': form,
-            'requests_received': requests_received,
+            'requests_received': list(get_requests_received(request)),
             'waiting_friend_requests': waiting_friend_requests,
-            'friendships': friendships,
+            'friendships': get_friendships(request),
         }
         return render(request, 'users/friends.html', context)
 
