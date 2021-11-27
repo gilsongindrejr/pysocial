@@ -65,3 +65,25 @@ class Friendship(models.Model):
 
     def __str__(self):
         return f'Friendship between {self.user.email} and {self.friend.email}'
+
+
+def get_requests_received(request):
+    return Friendship.objects.filter(friend__email=request.user.email)
+
+
+def get_requests_sent(request):
+    return Friendship.objects.filter(user__email=request.user.email)
+
+
+def get_friendships(request):
+    friend_requests = list(get_requests_received(request)) + list(get_requests_sent(request))
+    return [friendship for friendship in friend_requests if friendship.accepted]
+
+
+def get_friends(request):
+    friendships = get_friendships(request)
+    friends_sender = [friendship.user.email for friendship in friendships
+                      if friendship.user.email != request.user.email]
+    friends_receiver = [friendship.friend.email for friendship in friendships
+                        if friendship.friend.email != request.user.email]
+    return friends_receiver + friends_sender

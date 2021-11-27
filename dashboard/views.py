@@ -4,7 +4,7 @@ from django.views import View
 from dashboard.models import Post
 from dashboard.forms import PostModelForm
 
-from users.views import get_friends
+from users.models import get_friends
 
 
 class DashboardView(View):
