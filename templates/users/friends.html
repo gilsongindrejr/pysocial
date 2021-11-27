@@ -6,9 +6,9 @@
 </head>
 <body>
     <h1>Add Friends</h1>
-    <h3>You have {{ waiting_friend_requests }} friend requests</h3>
     {% for request in requests_received %}
         {% if request.accepted == False %}
+            <h3>You have {{ waiting_friend_requests }} friend requests</h3>
             <h4>{{ request.user }} want to be friend with you!</h4>
             <a href="{% url 'users:accept_friendship' request.pk %}">Accept</a>
             <a href="{% url 'users:deny_friendship' request.pk %}">Deny</a>
@@ -26,9 +26,17 @@
     <h3>Friends</h3>
     {% for friendship in friendships %}
         {% if friendship.user.email == user.email %}
-            <h4>{{ friendship.friend.email }}</h4><p><a href="{% url 'users:remove_friend' friendship.friend.email %}">remove friend</a></p>
+            <h4>{{ friendship.friend.email }}</h4>
+            <p>Friends since {{ friendship.created }}</p>
+            <p>
+                <a href="{% url 'users:remove_friend' friendship.id %}">remove friend</a>
+            </p><br>
         {% else %}
-            <h4>{{ friendship.user.email }}</h4><p><a href="{% url 'users:remove_friend' friendship.user.email %}">remove friend</a></p>
+            <h4>{{ friendship.user.email }}</h4>
+            <p>Friends since {{ friendship.created }}</p>
+            <p>
+                <a href="{% url 'users:remove_friend' friendship.id %}">remove friend</a>
+            </p><br>
         {% endif %}
     {% endfor %}
 </body>

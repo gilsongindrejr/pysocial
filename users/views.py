@@ -108,11 +108,9 @@ def deny_friendship(request, pk):
     return redirect('users:friends')
 
 
-def remove_friend(request, email):
-    friend = Friendship.objects.filter(user__email=email, friend__email=request.user.email)
-    friend2 = Friendship.objects.filter(user__email=request.user.email, friend__email=email)
-    friendship = list(friend) + list(friend2)
-    friendship[0].delete()
+def remove_friend(request, pk):
+    friendship = Friendship.objects.filter(id=pk)
+    friendship.delete()
     return redirect('users:friends')
 
 
