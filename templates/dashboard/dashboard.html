@@ -12,14 +12,11 @@
         {{ form.as_p }}
         <input type="submit" value="Post">
     </form>
-    {% for post in posts %}
+    {% for post in page_obj %}
         <p>{{ post.author }}</p>
-        <p>{{ post.created }}</p>
-        <img src="{{ post.image.url }}" alt="">
+        <img src="{{ post.image.url}}" alt="">
         <p>{{ post.comment }}</p>
-        {% if post.author == request.user %}
-        <a href="{% url 'dashboard:delete_post' post.id %}">delete post</a>
-        {% endif %}
     {% endfor %}
+    {% include 'dashboard/pagination.html' %}
 </body>
 </html>

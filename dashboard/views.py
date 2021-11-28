@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
+from django.core.paginator import  Paginator
 
 from dashboard.models import Post
 from dashboard.forms import PostModelForm
@@ -18,10 +19,16 @@ class DashboardView(View):
             friends_posts += Post.objects.filter(author__email=friend)
         posts = list(user_posts) + friends_posts
         posts.reverse()
+
+        # pagination
+        paginator = Paginator(posts, 2)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
         context = {
             'form': form,
             'friends': friends,
-            'posts': posts,
+            'page_obj': page_obj,
         }
         return render(request, 'dashboard/dashboard.html', context)
 
