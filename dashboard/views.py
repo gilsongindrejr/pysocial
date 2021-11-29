@@ -8,6 +8,10 @@ from dashboard.forms import PostModelForm
 from users.models import get_friends
 
 
+def order_post_by_creation(post):
+    return post.created
+
+
 class DashboardView(View):
 
     def get(self, request):
@@ -18,7 +22,9 @@ class DashboardView(View):
         for friend in friends:
             friends_posts += Post.objects.filter(author__email=friend)
         posts = list(user_posts) + friends_posts
-        posts.reverse()
+
+        # order posts by creation date
+        posts.sort(reverse=True, key=order_post_by_creation)
 
         # pagination
         paginator = Paginator(posts, 2)
