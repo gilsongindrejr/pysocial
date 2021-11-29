@@ -15,6 +15,7 @@
     {% for post in page_obj %}
         <p>{{ post.author }}</p>
         <img src="{{ post.image.url}}" alt="">
+        <p>{{ post.created }}</p>
         <p>{{ post.comment }}</p>
     {% endfor %}
     {% include 'dashboard/pagination.html' %}
