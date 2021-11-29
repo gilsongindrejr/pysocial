@@ -136,3 +136,10 @@ LOGIN_REDIRECT_URL = 'users:profile'
 LOGOUT_REDIRECT_URL = 'users:login'
 LOGIN_URL = 'users:login'
 LOGOUT_URL = 'users:logout'
+
+# https redirect with secure cookie and request
+# cannot be used with django development server
+# uncomment if used with another server
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
