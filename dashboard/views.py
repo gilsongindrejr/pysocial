@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from django.core.paginator import  Paginator
@@ -12,11 +13,11 @@ def order_post_by_creation(post):
     return post.created
 
 
-class DashboardView(View):
+class DashboardView(View, LoginRequiredMixin):
 
     def get(self, request):
         form = PostModelForm()
-        friends = get_friendships(request)
+        friends = get_friendships(request, email_only=True)
         user_posts = Post.objects.filter(author__email=request.user.email)
         friends_posts = []
         for friend in friends:

@@ -20,31 +20,54 @@
     {% endif %}
 
 
-    <h3>Add friend</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit">
-    </form>
-    <br>
-    <br>
-
-
-    <h3>Search friend</h3>
+    <h3>Search people</h3>
     <form method="get">
-        {{ search_form.as_p }}
+        {{ search_people_form.as_p }}
         <input type="submit">
     </form>
-
-    {% if search %}
-        <h4>Found</h4>
-        {{ search }}
+    {% if search_people %}
+        {% for person in search_people %}
+            {% if person.email in friendships_email %}
+                <h4>{{ person.first_name }} {{ person.last_name }}</h4>
+                <p>Already in friend list</p>
+            {% elif person.email in requests_sent %}
+                <h4>{{ person.first_name }} {{ person.last_name }}</h4>
+                <p>Request sent</p>
+            {% else %}
+                <h4>{{ person.first_name }} {{ person.last_name }}</h4>
+                <p><a href="{% url 'users:send_friend_request' person.id %}">Send request</a></p>
+            {% endif %}
+        {% endfor %}
     {% endif %}
     <br>
     <br>
 
 
     <h3>Friends</h3>
+    <form method="get">
+        {{ search_friend_form.as_p }}
+        <input type="submit">
+    </form>
+    {% if search_friend %}
+        <h4>Found {{ search_friend|length }} friend</h4>
+        {% for friendship in search_friend %}
+            {% if friendship.user.email == user.email %}
+                <h4>{{ friendship.friend.email }}</h4>
+                <p>Friends since {{ friendship.created }}</p>
+                <p>
+                    <a href="{% url 'users:remove_friend' friendship.id %}">remove friend</a>
+                </p>
+            {% else %}
+                <h4>{{ friendship.user.email }}</h4>
+                <p>Friends since {{ friendship.created }}</p>
+                <p>
+                    <a href="{% url 'users:remove_friend' friendship.id %}">remove friend</a>
+                </p>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <br>
+
     {% for friendship in friendships %}
         {% if friendship.user.email == user.email %}
             <h4>{{ friendship.friend.email }}</h4>

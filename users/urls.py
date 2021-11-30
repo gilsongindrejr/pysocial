@@ -4,7 +4,7 @@ from .views import\
     RegisterUserView, LoginView, LogoutView,\
     PasswordChangeView, ProfileView, UpdateProfileView,\
     FriendshipHandlerView, accept_friendship, deny_friendship, \
-    remove_friend
+    remove_friend, send_friend_request
 
 app_name = 'users'
 urlpatterns = [
@@ -12,6 +12,7 @@ urlpatterns = [
     path('update_profile', UpdateProfileView.as_view(), name='update_profile'),
 
     path('friends', FriendshipHandlerView.as_view(), name='friends'),
+    path('send_request/<int:pk>', send_friend_request, name='send_friend_request'),
     path('friend_accept/<int:pk>', accept_friendship, name='accept_friendship'),
     path('friend_deny/<int:pk>', deny_friendship, name='deny_friendship'),
     path('friend_remove/<int:pk>', remove_friend, name='remove_friend'),

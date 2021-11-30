@@ -17,9 +17,9 @@ class UserChangeForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'image')
 
 
-class FriendForm(forms.Form):
-    friend = forms.CharField(max_length=100, required=False)
+class SearchPeopleForm(forms.Form):
+    search_people = forms.CharField(max_length=100, required=False)
 
 
 class SearchFriendForm(forms.Form):
-    search = forms.CharField(max_length=100, required=False)
+    search_friend = forms.CharField(max_length=100, required=False)

@@ -6,8 +6,9 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib.postgres.search import SearchVector
 
-from .forms import UserCreationForm, UserChangeForm, FriendForm, SearchFriendForm
+from .forms import UserCreationForm, UserChangeForm, SearchPeopleForm, SearchFriendForm
 
 from .models import Friendship, get_requests_received, get_friendships, get_requests_sent, get_waiting_friend_requests
 
@@ -17,74 +18,66 @@ class FriendshipHandlerView(View):
     def get(self, request):
 
         context = {
-            'form': FriendForm(),
+            'search_people_form': SearchPeopleForm(),
             'requests_received': list(get_requests_received(request)),
+            'requests_sent': get_requests_sent(request, email_only=True),
             'waiting_friend_requests': get_waiting_friend_requests(request),
+            'friendships_email': get_friendships(request, email_only=True),
             'friendships': get_friendships(request),
-            'search_form': SearchFriendForm(),
+            'search_friend_form': SearchFriendForm(),
         }
-        if request.GET.get('search'):
+
+        if request.GET.get('search_friend'):
             form = SearchFriendForm(request.GET)
             if form.is_valid():
-                email = form.cleaned_data['search']
-                friends = get_friendships(request, email_only=True)
-                if email in friends:
-                    context['search'] = email
+                search = form.cleaned_data['search_friend']
+                raw_results = Friendship.objects.annotate(
+                    search=SearchVector('friend__first_name', 'friend__last_name')
+                ).filter(search=search)
+                filtered_results = []
+                for friendship in raw_results:
+                    if friendship.accepted:
+                        if friendship.user.email == request.user.email or friendship.friend.email == request.user.email:
+                            filtered_results.append(friendship)
+                context['search_friend'] = filtered_results
+
+        if request.GET.get('search_people'):
+            form = SearchPeopleForm(request.GET)
+            if form.is_valid():
+                search = form.cleaned_data['search_people']
+                user_model = get_user_model()
+                results = user_model.objects.annotate(
+                    search=SearchVector('first_name', 'last_name')
+                ).filter(search=search)
+                context['search_people'] = results
         return render(request, 'users/friends.html', context)
 
-    def post(self, request):
-        context = {}
-        add_friend_form = FriendForm(request.POST)
 
-        context = {
-            'form': FriendForm(),
-            'requests_received': get_requests_received(request),
-            'waiting_friend_requests': get_waiting_friend_requests(request),
-            'friendships': get_friendships(request),
-            'search_form': SearchFriendForm(),
-        }
-
-        if add_friend_form.is_valid():
-            friend_email = add_friend_form.cleaned_data['friend']
-
-            # check if friend_email is in friend list by checking in who sent the request
-            # and in from who the user received the request
-            if friend_email in get_friendships(request, email_only=True):
-                context['alert'] = 'Already in friend list!'
-                return render(request, 'users/friends.html', context)
-            # check if user has already sent friend request to friend_email
-            if friend_email in get_requests_sent(request, email_only=True):
-                context['alert'] = 'Already send friend request to this user!'
-                return render(request, 'users/friends.html', context)
-            if friend_email == request.user.email:
-                context['alert'] = "That's your email!"
-                return render(request, 'users/friends.html', context)
-
-            friend = get_object_or_404(get_user_model(), email=friend_email)
-            friendship = Friendship()
-            friendship.user = request.user
-            friendship.friend = friend
-            friendship.save()
-            context['alert'] = 'Request sent!'
-        return render(request, 'users/friends.html', context)
+def send_friend_request(request, pk):
+    friend = get_object_or_404(get_user_model(), pk=pk)
+    fs = Friendship()
+    fs.user = request.user
+    fs.friend = friend
+    fs.save()
+    return redirect('users:friends')
 
 
 def accept_friendship(request, pk):
-    fd = Friendship.objects.get(pk=pk)
-    fd.accepted = True
-    fd.save()
+    fs = Friendship.objects.get(pk=pk)
+    fs.accepted = True
+    fs.save()
     return redirect('users:friends')
 
 
 def deny_friendship(request, pk):
-    fd = Friendship.objects.get(pk=pk)
-    fd.delete()
+    fs = Friendship.objects.get(pk=pk)
+    fs.delete()
     return redirect('users:friends')
 
 
 def remove_friend(request, pk):
-    friendship = Friendship.objects.filter(id=pk)
-    friendship.delete()
+    fs = Friendship.objects.filter(id=pk)
+    fs.delete()
     return redirect('users:friends')
 
 
