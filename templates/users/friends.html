@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Friends</title>
+    <title>Friends</title>
 </head>
 <body>
-    <h1>Add Friends</h1>
+    <h1>Friends</h1>
     {% for request in requests_received %}
         {% if request.accepted == False %}
             <h3>You have {{ waiting_friend_requests }} friend requests</h3>
@@ -14,15 +14,36 @@
             <a href="{% url 'users:deny_friendship' request.pk %}">Deny</a>
         {% endif %}
     {% endfor %}
+
     {% if alert %}
         <h4>{{ alert }}</h4>
     {% endif %}
+
+
     <h3>Add friend</h3>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit">
     </form>
+    <br>
+    <br>
+
+
+    <h3>Search friend</h3>
+    <form method="get">
+        {{ search_form.as_p }}
+        <input type="submit">
+    </form>
+
+    {% if search %}
+        <h4>Found</h4>
+        {{ search }}
+    {% endif %}
+    <br>
+    <br>
+
+
     <h3>Friends</h3>
     {% for friendship in friendships %}
         {% if friendship.user.email == user.email %}

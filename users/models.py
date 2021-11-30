@@ -71,19 +71,28 @@ def get_requests_received(request):
     return Friendship.objects.filter(friend__email=request.user.email)
 
 
-def get_requests_sent(request):
-    return Friendship.objects.filter(user__email=request.user.email)
+def get_requests_sent(request, email_only=False):
+    friendships_obj = Friendship.objects.filter(user__email=request.user.email)
+    if email_only:
+        return [friendship.friend.email for friendship in friendships_obj]
+    return friendships_obj
 
 
-def get_friendships(request):
+def get_friendships(request, email_only=False):
     friend_requests = list(get_requests_received(request)) + list(get_requests_sent(request))
-    return [friendship for friendship in friend_requests if friendship.accepted]
+    accepted_requests_obj = [friendship for friendship in friend_requests if friendship.accepted]
+    if email_only:
+        friends_sender = [friendship.user.email for friendship in accepted_requests_obj
+                          if friendship.user.email != request.user.email]
+        friends_receiver = [friendship.friend.email for friendship in accepted_requests_obj
+                            if friendship.friend.email != request.user.email]
+        return friends_receiver + friends_sender
+    return accepted_requests_obj
 
 
-def get_friends(request):
-    friendships = get_friendships(request)
-    friends_sender = [friendship.user.email for friendship in friendships
-                      if friendship.user.email != request.user.email]
-    friends_receiver = [friendship.friend.email for friendship in friendships
-                        if friendship.friend.email != request.user.email]
-    return friends_receiver + friends_sender
+def get_waiting_friend_requests(request):
+    waiting_friend_requests = 0
+    for f_request in get_requests_received(request):
+        if not f_request.accepted:
+            waiting_friend_requests += 1
+    return waiting_friend_requests

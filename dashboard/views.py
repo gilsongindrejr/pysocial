@@ -5,7 +5,7 @@ from django.core.paginator import  Paginator
 from dashboard.models import Post
 from dashboard.forms import PostModelForm
 
-from users.models import get_friends
+from users.models import get_friendships
 
 
 def order_post_by_creation(post):
@@ -16,7 +16,7 @@ class DashboardView(View):
 
     def get(self, request):
         form = PostModelForm()
-        friends = get_friends(request)
+        friends = get_friendships(request)
         user_posts = Post.objects.filter(author__email=request.user.email)
         friends_posts = []
         for friend in friends:

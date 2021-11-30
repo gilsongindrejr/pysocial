@@ -7,63 +7,59 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404, redirect
 
-from .forms import UserCreationForm, UserChangeForm, FriendForm
+from .forms import UserCreationForm, UserChangeForm, FriendForm, SearchFriendForm
 
-from .models import Friendship, get_requests_received, get_friendships
+from .models import Friendship, get_requests_received, get_friendships, get_requests_sent, get_waiting_friend_requests
 
 
 class FriendshipHandlerView(View):
 
     def get(self, request):
-        form = FriendForm()
-
-        # iterate over requests received of the user to look for unaccepted friend requests
-        # increment waiting_friend_requests on which friend request still unaccepted
-        waiting_friend_requests = 0
-        for f_request in get_requests_received(request):
-            if not f_request.accepted:
-                waiting_friend_requests += 1
 
         context = {
-            'form': form,
+            'form': FriendForm(),
             'requests_received': list(get_requests_received(request)),
-            'waiting_friend_requests': waiting_friend_requests,
+            'waiting_friend_requests': get_waiting_friend_requests(request),
             'friendships': get_friendships(request),
+            'search_form': SearchFriendForm(),
         }
+        if request.GET.get('search'):
+            form = SearchFriendForm(request.GET)
+            if form.is_valid():
+                email = form.cleaned_data['search']
+                friends = get_friendships(request, email_only=True)
+                if email in friends:
+                    context['search'] = email
         return render(request, 'users/friends.html', context)
 
     def post(self, request):
-        context = {'form': FriendForm()}
-        form_email = FriendForm(request.POST)
+        context = {}
+        add_friend_form = FriendForm(request.POST)
 
-        # get friend requests received and sent
-        requests_received = Friendship.objects.filter(friend__email=request.user.email)
-        requests_sent = Friendship.objects.filter(user__email=request.user.email)
-        context['requests_received'] = requests_received
+        context = {
+            'form': FriendForm(),
+            'requests_received': get_requests_received(request),
+            'waiting_friend_requests': get_waiting_friend_requests(request),
+            'friendships': get_friendships(request),
+            'search_form': SearchFriendForm(),
+        }
 
-        waiting_friend_requests = 0
-        for f_request in requests_received:
-            if not f_request.accepted:
-                waiting_friend_requests += 1
-        context['waiting_friend_requests'] = waiting_friend_requests
+        if add_friend_form.is_valid():
+            friend_email = add_friend_form.cleaned_data['friend']
 
-        friend_requests = list(requests_received) + list(requests_sent)
-
-        # create a list with all friend request with accepted == True
-        friendships = [friendship for friendship in friend_requests if friendship.accepted]
-        context['friendships'] = friendships
-
-        if form_email.is_valid():
-            friend_email = form_email.cleaned_data['friend']
             # check if friend_email is in friend list by checking in who sent the request
             # and in from who the user received the request
-            if friend_email in [friendship.user.email for friendship in friendships] or friend_email in [friendship.friend.email for friendship in friendships]:
+            if friend_email in get_friendships(request, email_only=True):
                 context['alert'] = 'Already in friend list!'
                 return render(request, 'users/friends.html', context)
             # check if user has already sent friend request to friend_email
-            if friend_email in [friendship.friend.email for friendship in requests_sent if friendship.accepted is not True]:
+            if friend_email in get_requests_sent(request, email_only=True):
                 context['alert'] = 'Already send friend request to this user!'
                 return render(request, 'users/friends.html', context)
+            if friend_email == request.user.email:
+                context['alert'] = "That's your email!"
+                return render(request, 'users/friends.html', context)
+
             friend = get_object_or_404(get_user_model(), email=friend_email)
             friendship = Friendship()
             friendship.user = request.user
