@@ -7,7 +7,7 @@
 <body>
   <a href="{% url 'users:login' %}">Login</a>
   <h1>This is the Register Page!</h1>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
       <input type="submit">
