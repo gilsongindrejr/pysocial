@@ -80,10 +80,10 @@ WSGI_APPLICATION = 'pysocial.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pysocial',
-        'USER': 'pysocial',
-        'PASSWORD': 'pysocial',
-        'HOST': '127.0.0.1',
+        'NAME': 'pysocial_app',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }

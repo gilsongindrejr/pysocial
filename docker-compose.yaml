@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14
+    volumes:
+      - data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=pysocial_app
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    networks:
+      - nw_pysocial
+    container_name: pysocial_db
+
+  pysocial:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: gilsonjr/pysocial:1.0
+    container_name: pysocial
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 80:8000
+    networks:
+      - nw_pysocial
+    volumes:
+      - app:/var/www/
+    depends_on:
+      - db
+
+networks:
+  nw_pysocial:
+    driver: bridge
+
+volumes:
+  app:
+  data:
