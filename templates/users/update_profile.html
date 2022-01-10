@@ -1,16 +1,47 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update Profile</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="GilsonJr">
+    <meta name="description" content="Share your images with the world!">
+    <meta name="keywords" content="social network images">
+    
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/update-profile.css' %}">
+
+    <title>Pysocial - Change Password</title>
 </head>
 <body>
-<h1>Update Profile</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit">
-    </form>
-    <a href="{% url 'users:password_change' %}">Change password</a>
+    <div class="content">
+        <header class="content-header">
+            <h1>Pysocial</h1>
+            <p>Share your images with the world!</p>
+        </header>
+        <main class="content-main">
+            <h2>Update Profile</h2>
+            <form class="login-form" method="post">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <div class="form-controls">
+                    <div class="form-input">
+                        <input class="button" type="submit" value="Send">
+                    </div>
+                    <div class="form-links">
+                        <p>Forgot password? <a class="link" href="{% url 'users:password_change' %}">Reset password</a></p>
+                    </div>
+                </div>
+            </form>
+        </main>
+        <footer>
+            <p>All rights reserved &copy;</p>
+        </footer>
+    </div>
 </body>
 </html>

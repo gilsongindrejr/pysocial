@@ -1,21 +1,50 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Profile</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="GilsonJr">
+    <meta name="description" content="Share your images with the world!">
+    <meta name="keywords" content="social network images">
+    
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+    <script src="https://kit.fontawesome.com/ba2546cdef.js" crossorigin="anonymous"></script>
+    
+    <title>Document</title>
 </head>
 <body>
-  <div>
-    <a href="{% url 'users:logout' %}">Logout</a>
-    <a href="{% url 'users:update_profile' %}">Update profile</a>
-  </div>
-  {% if user.image %}
-  <span><img src="{{ user.image.url }}" alt="image"></span>
-  {% else %}
-  <span><img src="/media/users/placeholder.png" alt=""></span>
-  {% endif %}
-  <h3>{{ user.first_name }} {{ user.last_name }}</h3>
-  <h1>Welcome to Pysocial</h1>
-  <a href="{% url 'users:friends' %}">Add friends</a>
+    <div class="content">
+        <header class="content-header">
+            <h1>Welcome to Pysocial</h1>
+        </header>
+        <main class="content-main">
+            <div class="content-main-userimage">
+                {% if user.image %}
+                    <img class="user-img" src="{{ user.image.url }}" alt="">
+                {% else %}
+                    <img class="user-img" src="/media/users/placeholder.png" alt="">
+                {% endif %}
+            </div>
+            <div class="content-main-userinfo">
+                <div class="content-main-username">
+                    <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                </div>
+                <div class="content-main-userconf">
+                    <a href="{% url 'users:update_profile' %}"><span class="fas fa-cog"></span></a>
+                    <a href="{% url 'users:friends' %}"><span class="fas fa-user-friends"></span></a>
+                    <a href="{% url 'users:logout' %}"><span class="fas fa-power-off"></span></a>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p>All rights reserved &copy;</p>
+        </footer>
+    </div>
 </body>
 </html>

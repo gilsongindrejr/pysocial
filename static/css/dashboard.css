@@ -1,0 +1,106 @@
+.user-image, .friend-image{
+    width: 5em;
+    height: auto;
+    overflow: hidden;
+    margin-right: 1em;
+    border: 1px solid #8f8f8f;
+}
+.post-image{
+    width: 80%;
+    height: auto;
+    border: 1px solid #8f8f8f;
+}
+.icon{
+    margin-left: 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.7em;
+}
+.content{
+    display: grid;
+    position: relative;
+}
+.content-header{
+    height: 7em;
+    width: 100%;
+    background: #414141;
+    color: #d8d8d8;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr;
+    position: fixed;
+}
+.content-header-user{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 1em;  
+}
+.username-link{
+    text-decoration: none;
+    color: #c4c4c4;
+}
+.header-controls{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 1em;
+}
+.content-main{
+    margin-top: 7em;
+
+}
+.post{
+    border-bottom: 2px solid #535353;
+}
+.post-header{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1em;
+}
+.friend-name-link{
+    text-decoration: none;
+    color: #414141;
+}
+.post-main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+footer{
+    background-color: #505050;
+    height: 10vh;
+}
+
+@media screen and (min-width:900px){
+    body{
+        background: #808080; 
+    }
+    .content{
+        width: 70vw;
+        margin-left: 15%;
+        box-shadow: 0 0 15px #000000;
+    }
+    .post{
+        background: #ffffff;
+    }
+    .content-header{
+        padding-left: 2em;
+        box-sizing: border-box;
+        width: 70vw;
+    }
+    .header-controls{
+        padding-right: 2em;
+    }
+    .friend-image{
+        margin-left: 2em;
+    }
+
+}
+@media screen and (min-width:1300px){       
+    .content-header{
+        width: 70vw;
+    }
+}

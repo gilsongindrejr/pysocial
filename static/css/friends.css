@@ -1,0 +1,119 @@
+body{
+    margin-bottom: 50px;
+}
+.user-image, .friend-image{
+    width: 5em;
+    height: auto;
+    overflow: hidden;
+    margin-right: 1em;
+    border: 1px solid #8f8f8f;
+}
+.icon{
+    margin-left: 20px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.7em;
+}
+.content{
+    display: grid;
+    position: relative;
+}
+.content-header{
+    height: 7em;
+    width: 100%;
+    background: #414141;
+    color: #d8d8d8;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr;
+    position: fixed;
+}
+.content-header-user{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 1em;  
+}
+.username-link{
+    text-decoration: none;
+    color: #c4c4c4;
+}
+.header-controls{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 1em;
+}
+.content-main{
+    margin-top: 7em;
+
+}
+.friend-name-link{
+    text-decoration: none;
+    color: #414141;
+}
+
+footer{
+    background-color: #505050;
+    position: fixed;
+    height: 50px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
+}
+.search-friend, .search-people{
+    background-color: #868686;
+    display:flex;
+    justify-content: center;
+    padding-top: .5em;
+}
+.search-field{
+    width: 8em;
+}
+
+.friend{
+    display: grid;
+    margin: 1em;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+}
+.friend-info, .friend-remove{
+    display: flex;
+    align-items: center;
+}
+.friend-remove{
+    justify-content: flex-end;
+}
+
+@media screen and (min-width:900px){
+    body{
+        background: #808080;
+    }
+    .content{
+        width: 70vw;
+        margin-left: 15%;
+        box-shadow: 0 0 15px #000000;
+        background-color: white;
+    }
+    .content-header{
+        padding-left: 2em;
+        box-sizing: border-box;
+        width: 70vw;
+    }
+    .header-controls{
+        padding-right: 2em;
+    }
+    .friend-image{
+        margin-left: 2em;
+    }
+    .friend{
+        margin: 1em 5em 1em 5em;
+    }
+
+}
+@media screen and (min-width:1300px){
+    .friend{
+        margin: 1em 9em 1em 9em;
+    }
+}
